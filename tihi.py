@@ -69,20 +69,14 @@ def findLineParams(videoName):
 
 
 def houghTransformtion(frame,grayImg):
-   # img = cv2.imread('dave.jpg')
-  #  gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(grayImg,50,150,apertureSize = 3)
 
     minx,miny,maxx,maxy=advancedHoughTransformation(frame,edges,600,10)
-   # print("minx={minx} miny={miny} maxx={maxx} maxy={maxy}".format(minx=minx, miny=miny, maxx=maxx, maxy=maxy))
-  #  roughHoughTransformation(frame,edges)
     cv2.imwrite('linija.jpg',frame)
     return minx,miny, maxx,maxy
 
 
 def advancedHoughTransformation(frame,edges,minLineLength,maxLineGap):
-   # minLineLength = 100
-   # maxLineGap = 10
     lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 30, minLineLength, maxLineGap)
 
     minx=0
@@ -98,7 +92,6 @@ def advancedHoughTransformation(frame,edges,minLineLength,maxLineGap):
 
     for i in  range(len(lines)):
         for x1, y1, x2, y2 in lines[i]:
-           # print("x1= {x1} y1={y1} x2={x2}   y2={y2}.".format(x1=x1, x2=x2, y1=y1, y2=y2))
             if x1<minx :
                 minx=x1
                 miny=y1
@@ -108,9 +101,6 @@ def advancedHoughTransformation(frame,edges,minLineLength,maxLineGap):
 
     cv2.line(frame, (minx,miny), (maxx, maxy), (0, 255, 0), 2)
     return minx,miny,maxx,maxy
-      # cv2.line(frame, (399, 118), (429, 96), (0, 255, 0), 2)
-      #  cv2.line(frame, (250, 60), (500, 130), (0, 255, 0), 2)
-   # cv2.imwrite('houghlines5.jpg', img)
 
 def roughHoughTransformation(frame,edges):
     lines = cv2.HoughLines(edges, 1, np.pi / 180, 200)
@@ -123,7 +113,6 @@ def roughHoughTransformation(frame,edges):
         y1 = int(y0 + 1000 * (a))
         x2 = int(x0 - 1000 * (-b))
         y2 = int(y0 - 1000 * (a))
-      #  print("x1= {x1} y1={y1} x2={x2}   y2={y1}.".format(x1=x1, x2=x2, y1=y1, y2=y2))
         cv2.line(frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
 mnist = fetch_mldata('MNIST original')
 def findMinXAndMinY(regions):
@@ -168,8 +157,6 @@ def findRegions(img):
                 label_img1 = label(imgBW[bbox[0] - 10:bbox[2] + 10, bbox[1] - 10:bbox[3] + 10])
                 regions1 = regionprops(label_img1)
                 imageDigit2 = img[bbox[0] - 10:bbox[2] + 10, bbox[1] - 10:bbox[3] + 10]
-               # height=imageDigit2.shape[1]
-                #width=imageDigit2.shape[0]
 
                 result = findMinXAndMinY(regions1)
                 print "result[0] " + format(result[0]) + " result[1]=" + format(result[1]) + " result[2] " + format(
@@ -203,7 +190,6 @@ def findRegions(img):
                 y1 = result[2] - h_1
                 x11 = x1.astype('uint8')
                 y11 = y1.astype('uint8')
-                print "centroide +-15 su izvan dozvoljenog opsega"
                 imageDigit = img[y1:y1 + 28, x1:x1 + 28]
                 digitImages.append(imageDigit)
                 imageBoundary.append((y1, x1))
@@ -295,20 +281,15 @@ def putInLeftCorner(img_BW):
     
 
     newImg = np.zeros((28, 28))
-
     newImg[0:height, 0:width] = newImg[0:height, 0:width] + img_BW[minx:maxx, miny:maxy]
-
-#        plt.show()
     return newImg
+
 def findLabel(digitImg):
     i=0;
     while i<70000:
         sum=0
         mnist_img=new_mnist_set[i]
-#        mnist_img=mnist.data[i].reshape(28,28)
-      #  new_mnist_img=putInLeftCorner(mnist_img)
         sum=np.sum(mnist_img!=digitImg)
- #       print "suma je " + format(sum)
 
         if sum<10:
 
@@ -319,17 +300,7 @@ def findLabel(digitImg):
     return -1
 
 def getDigit(img, i):
-    #label_img = label(1 - img)
-   # img_BW=convertIMG(img)
-   # img_gray=(img[:,:,0]+img[:,:,1] + 0* img[:,:,2])/255.0
-#    img=[img[:,:,0:1],img[:,:,2]*0]
-#    images=findRegions(img)
-#    for img in images:
-#        plt.imshow(img,'gray')
-#        plt.show()
-    #=====================VRATITI-START=============================
     img_BW=color.rgb2gray(img) >= 0.88
- #   img_BW=img_gray>=0.88
     img_BW=(img_BW).astype('uint8')
     if(i == 1) :
         str_elem = disk(2)
@@ -337,25 +308,10 @@ def getDigit(img, i):
         str_elem = disk(1)
         img_BW = erosion(img_BW, selem=str_elem)
 
-    #=====================VRATITI-END=============================
-#    img_BW=my_rgb2gray(img)==1
-#    str_elem=disk(2)
-#   img_BW=opening(img_BW,selem=str_elem)
-#    img_BW = closing(img_BW, selem=str_elem)
     plt.imshow(img_BW,'gray')
     plt.show()
-#===========================putInLeftCorner=============================================
-
-#===========================putInLeftCorner=============================================
     newImg=putInLeftCorner(img_BW)
-  #  digit = img_BW[row0:row1, col0:col1]
-    #             digit = digit.reshape(784)
- #   img = img0[row0:row1, col0:col1]
-    #plt.imshow(newImg, 'gray')
-    #plt.show()
-   # print("size "+format(newImg.shape))
     rez = findLabel(newImg)
-    #              rez=findLabel(digit)
     print("Proslijedjeni broj je " + format(rez))
     return rez
 
@@ -368,11 +324,7 @@ def transformMnist(mnist):
     while i < 70000:
         mnist_img=mnist.data[i].reshape(28,28)
         mnist_img_BW=((color.rgb2gray(mnist_img)/255.0)>0.88).astype('uint8')
-        #print("Dimenzije mnist image "+format(mnist_img.shape))
-#        if(i==2):
-#           break
         new_mnist_img=putInLeftCorner(mnist_img_BW)
-#        new_mnist_set[i]=new_mnist_img
         new_mnist_set.append(new_mnist_img)
         i=i+1
 
@@ -486,27 +438,20 @@ def main():
         times = []
         
         suma = 0
-        #videoName="Videos/video-0.avi"
-        
-        #videoName = videoName0 + "-" + format(i) + ".avi"
 
         cap = cv2.VideoCapture(videoName)
 
         x1, y1, x2, y2 = findLineParams(videoName)
-        # line = [(100, 450), (500, 100)]
         line = [(x1, y1), (x2, y2)]
         
         boundaries = [([230, 230, 230], [255, 255, 255])]
         
         kernel = np.ones((2,2),np.uint8)
-        #lower = np.array([230, 230, 230])
-        #upper = np.array([255, 255, 255])
 
         brojac = 0
 
 
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        #fourcc = cv2.cv.CV_FOURCC(*'XVID')
         out = cv2.VideoWriter('images/output-rezB.avi',fourcc, 20.0, (640,480))
 
         while (1):
@@ -518,16 +463,15 @@ def main():
             if not ret:
                 break
             (lower, upper) = boundaries[0]
-            # create NumPy arrays from the boundaries
             lower = np.array(lower, dtype="uint8")
             upper = np.array(upper, dtype="uint8")
             mask = cv2.inRange(img, lower, upper)
             img0 = 1.0 * mask
 
-            img0 = cv2.dilate(img0, kernel)  # cv2.erode(img0,kernel)
             img0 = cv2.dilate(img0, kernel)
-            #pronalazi objekte koji su pronadjeni na slici i jedinstveno ih oznacava i sadrzani su
-            #u objektu labeled, a broj pronadjenih objekata se nalazi u promjenljivij nr_objects
+            img0 = cv2.dilate(img0, kernel)
+            #jedinstveno oznacava pronadjene objekte na slici i cuva ih u objektu label
+            #nr_objects - broj pronadjenih objekata
             labeled, nr_objects = ndimage.label(img0)
             objects = ndimage.find_objects(labeled)
             
@@ -543,11 +487,7 @@ def main():
                               (loc[0].stop - loc[0].start))
 
                 if (dxc > 11 or dyc > 11):
-                    #VRATI
-                   # cv2.circle(img, (xc, yc), 16, (25, 25, 255), 1)
                     elem = {'center': (xc, yc), 'size': (dxc, dyc), 't': t}
-                    # find in range
-                    #print("centar ({xc},{yc}), size ({dxc},{dyc})".format(xc=xc,yc=yc,dxc=dxc,dyc=dyc))
                     lst = inRange(20, elem, elements)
                     nn = len(lst)
                     if nn == 0:
@@ -567,29 +507,20 @@ def main():
 
             for el in elements:
                 tt = t - el['t']
-               # x=pnt2line(0,0,0)
                 if (tt < 3):
                     dist, pnt, r = pnt2line2(el['center'], line[0], line[1])
                     if r > 0:
-                        #vratiti
-                      #  cv2.line(img, pnt, el['center'], (0, 255, 25), 1)
-                       # c = (25, 25, 255)
                         if (dist < 25
                             ):
-                            #c = (0, 255, 160)
                             if el['pass'] == False:
                                 el['pass'] = True
                                 counter += 1
                                 (x,y)=el['center']
                                 (sx,sy)=el['size']
-                               # getDigit(cv2.circle(img, el['center'], 16, c, 2))
                                 x1=x-14
                                 x2=x+14
                                 y1=y-14
                                 y2=y+14
-                                #(p1,p2)=(x1,y1)
-                                #(p3,p4)=(x2,y2)
-                               # cv2.rectangle(img,(p1,p2),(p3,p4),(255,255,0),3)
                                 mala = img[y1:y2,x1:x2]
                                 rez = getDigit(mala, 0)
                                 if(rez>-1):
@@ -604,9 +535,6 @@ def main():
                                     x2 = x + 14
                                     y1 = y - 14
                                     y2 = y + 14
-                                    #(p1, p2) = (x1, y1)
-                                    #(p3, p4) = (x2, y2)
-                                    # cv2.rectangle(img,(p1,p2),(p3,p4),(255,255,0),3)
                                     prev_mala = slika[y1:y2, x1:x2]
                                     rez = getDigit(prev_mala, 1)
                                     if (rez > -1):
@@ -615,12 +543,6 @@ def main():
                                 print("********************************************************")
                                 print ("Pronadjen centar({x},{y}) velicina({sx},{sy})".format(x=x, y=y,sx=sx,sy=sy))
                                 print("********************************************************")
-                              # print("pnt ".format(el['center']))
-                    #vratti promjenljivu umjest c
-                   # cv2.circle(img, el['center'], 16, c, 2)
-                    #VRATI
-                  #  cv2.circle(img, el['center'], 16, (25,25,255), 2)
-                   # id = el['id']
                     cv2.putText(img, str(el['id']),
                                 (el['center'][0] + 10, el['center'][1] + 10),
                                 cv2.FONT_HERSHEY_SIMPLEX, 1, 255)
@@ -628,15 +550,11 @@ def main():
                         ttt = t - hist['t']
                         if (ttt < 100):
                             asd = 1
-                            #Zuti trag
-                            #cv2.circle(img, hist['center'], 1, (0, 255, 255), 1)
 
                     for fu in el['future']:
                         ttt = fu[0] - t
                         if (ttt < 100):
                             asd=2
-                            # Zuti trag
-                            #cv2.circle(img, (fu[1], fu[2]), 1, (255, 255, 0), 1)
 
             elapsed_time = time.time() - start_time
             times.append(elapsed_time * 1000)
@@ -657,7 +575,6 @@ def main():
         et = np.array(times)
         print 'mean %.2f ms' % (np.mean(et))
         sve.append(suma)
-    # print np.std(et)
     cap.release()
     cv2.destroyAllWindows()
     print("********************************************************")
